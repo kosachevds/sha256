@@ -29,6 +29,17 @@ fn calculate(input: &[u8]) -> [u8; 32] {
     ];
 }
 
+fn get_extra_zero_bits_count(message_bits_count: u64) -> u64 {
+    let reminder = (message_bits_count + 1) % 512;
+    if reminder < 448 {
+        return 448 - reminder;
+    } 
+    if reminder > 448 {
+        return 512 + 448 - reminder;
+    } 
+    return 0;
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
