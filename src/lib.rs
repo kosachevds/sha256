@@ -31,6 +31,19 @@ fn calculate(input: &[u8]) -> [u8; 32] {
     ]
 }
 
+fn preprocess(input: &[u8]) -> Vec<u8> {
+    let message_bits_count = (input.len() * 8) as u64;
+    let extra_zero_bits = get_extra_zero_bits_count(message_bits_count);
+
+    let extra_bytes_count = (1 + extra_zero_bits) / 8;
+    let mut tail = vec![0u8; extra_bytes_count as usize];
+    tail[0] = 1u8 << 7;
+    tail.extend_from_slice(&message_bits_count.to_be_bytes());
+    let mut result = input.to_vec();
+    result.append(&mut tail);
+    result
+}
+
 fn get_extra_zero_bits_count(message_bits_count: u64) -> u64 {
     let reminder = (message_bits_count + 1) % 512;
     if reminder < 448 {
