@@ -1,3 +1,5 @@
+use std::u64;
+
 const RESULT_LENGTH: usize = 32;
 
 fn calculate(input: &[u8]) -> [u8; 32] {
@@ -26,18 +28,18 @@ fn calculate(input: &[u8]) -> [u8; 32] {
         0x69, 0xCA, 0x9A, 0xBC, 0xB0, 0x08, 0x2E, 0x4F, 
         0x8D, 0x56, 0x51, 0xE4, 0x6D, 0x3C, 0xDB, 0x76, 
         0x2D, 0x02, 0xD0, 0xBF, 0x37, 0xC9, 0xE5, 0x92
-    ];
+    ]
 }
 
 fn get_extra_zero_bits_count(message_bits_count: u64) -> u64 {
     let reminder = (message_bits_count + 1) % 512;
     if reminder < 448 {
-        return 448 - reminder;
-    } 
-    if reminder > 448 {
-        return 512 + 448 - reminder;
-    } 
-    return 0;
+        448 - reminder
+    } else if reminder > 448 {
+        512 + 448 - reminder
+    } else {
+        0
+    }
 }
 
 #[cfg(test)]
