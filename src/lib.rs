@@ -1,6 +1,10 @@
 use std::u64;
+use std::u32;
+use std::convert::TryInto;
 
 const RESULT_LENGTH: usize = 32;
+const CHUNK_BYTES_COUNT: usize = 512 / 8;
+const CHUNK_WORDS_COUNT: usize = 16;
 
 fn calculate(input: &[u8]) -> [u8; 32] {
     let h0: u32 = 0x6A09E667;
@@ -23,12 +27,25 @@ fn calculate(input: &[u8]) -> [u8; 32] {
         0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
     ];
 
+
     [
         0xD7u8, 0xA8, 0xFB, 0xB3, 0x07, 0xD7, 0x80, 0x94, 
         0x69, 0xCA, 0x9A, 0xBC, 0xB0, 0x08, 0x2E, 0x4F, 
         0x8D, 0x56, 0x51, 0xE4, 0x6D, 0x3C, 0xDB, 0x76, 
         0x2D, 0x02, 0xD0, 0xBF, 0x37, 0xC9, 0xE5, 0x92
     ]
+}
+
+fn chunk_to_be_words(chunk: &[u8]) -> [u32; CHUNK_WORDS_COUNT] {
+    let item_size = std::mem::size_of::<u32>();
+    let mut result = [0u32; CHUNK_WORDS_COUNT];
+
+    for i in 0..CHUNK_WORDS_COUNT {
+        let first_byte = i * item_size;
+        let int_bytes = &chunk[first_byte..(first_byte + item_size)];
+        result[i] = u32::from_be_bytes(int_bytes.try_into().unwrap());
+    }
+    result
 }
 
 fn preprocess(input: &[u8]) -> Vec<u8> {
