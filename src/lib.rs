@@ -27,6 +27,17 @@ fn calculate(input: &[u8]) -> [u8; 32] {
         0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
     ];
 
+    let input = preprocess(input);
+    let chunk_size = 512 / 8;
+    let chunk_begin = 0;
+    while chunk_begin < input.len() {
+        let chunk = &input[chunk_begin..(chunk_begin + chunk_size)];
+        let words = chunk_to_be_words(chunk);
+
+    }
+
+
+
     [
         0xD7u8, 0xA8, 0xFB, 0xB3, 0x07, 0xD7, 0x80, 0x94, 
         0x69, 0xCA, 0x9A, 0xBC, 0xB0, 0x08, 0x2E, 0x4F, 
