@@ -27,13 +27,26 @@ fn calculate(input: &[u8]) -> [u8; 32] {
         0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
     ];
 
-
     [
         0xD7u8, 0xA8, 0xFB, 0xB3, 0x07, 0xD7, 0x80, 0x94, 
         0x69, 0xCA, 0x9A, 0xBC, 0xB0, 0x08, 0x2E, 0x4F, 
         0x8D, 0x56, 0x51, 0xE4, 0x6D, 0x3C, 0xDB, 0x76, 
         0x2D, 0x02, 0xD0, 0xBF, 0x37, 0xC9, 0xE5, 0x92
     ]
+}
+
+fn extend_words(words: &mut [u32; CHUNK_WORDS_COUNT]) -> Vec<u32> {
+    let mut result: Vec<u32> = Vec::new();
+    result.reserve(64);
+    result.extend_from_slice(words);
+    for i in CHUNK_WORDS_COUNT..64 {
+        let w1 = result[i - 15];
+        let s0 = w1.rotate_right(7) ^ w1.rotate_right(18) ^ (w1 >> 3);
+        let w2 = result[i - 2];
+        let s1 = w2.rotate_right(17) ^ w2.rotate_right(19) ^ (w2 >> 10);
+        result[i] = result[i - 16] + s0 + w[i - 7] + s1;
+    }
+    result
 }
 
 fn chunk_to_be_words(chunk: &[u8]) -> [u32; CHUNK_WORDS_COUNT] {
