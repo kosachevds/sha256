@@ -7,14 +7,14 @@ const CHUNK_BYTES_COUNT: usize = 512 / 8;
 const CHUNK_WORDS_COUNT: usize = 16;
 
 fn calculate(input: &[u8]) -> [u8; 32] {
-    let h0: u32 = 0x6A09E667;
-    let h1: u32 = 0xBB67AE85;
-    let h2: u32 = 0x3C6EF372;
-    let h3: u32 = 0xA54FF53A;
-    let h4: u32 = 0x510E527F;
-    let h5: u32 = 0x9B05688C;
-    let h6: u32 = 0x1F83D9AB;
-    let h7: u32 = 0x5BE0CD19;
+    let mut h0: u32 = 0x6A09E667;
+    let mut h1: u32 = 0xBB67AE85;
+    let mut h2: u32 = 0x3C6EF372;
+    let mut h3: u32 = 0xA54FF53A;
+    let mut h4: u32 = 0x510E527F;
+    let mut h5: u32 = 0x9B05688C;
+    let mut h6: u32 = 0x1F83D9AB;
+    let mut h7: u32 = 0x5BE0CD19;
     
     let k: [u32; 64] = [
         0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
@@ -32,10 +32,48 @@ fn calculate(input: &[u8]) -> [u8; 32] {
     let chunk_begin = 0;
     while chunk_begin < input.len() {
         let chunk = &input[chunk_begin..(chunk_begin + chunk_size)];
-        let words = chunk_to_be_words(chunk);
+        let mut words = chunk_to_be_words(chunk);
+        let words = extend_words(&mut words);
+
+        let mut a = h0;
+        let mut b = h1;
+        let mut c = h2;
+        let mut d = h3;
+        let mut e = h4;
+        let mut f = h5;
+        let mut g = h6;
+        let mut h = h7;
+
+        for i in 0..63 {
+            let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
+            let ch = (e & f) ^ ((!e) & g);
+            let temp1 = h + s1 + ch + k[i] + words[i];
+            let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
+            let maj = (a & b) ^ (a & c) ^ (b ^ c);
+            let temp2 = s0 + maj;
+
+            h = g;
+            g = f;
+            f = e;
+            e = d + temp1;
+            d = c;
+            c = b;
+            b = a;
+            a = temp1 + temp2;
+        }
+
+        h0 = h0 + a;
+        h1 = h1 + b;
+        h2 = h2 + c;
+        h3 = h3 + d;
+        h4 = h4 + e;
+        h5 = h5 + f;
+        h6 = h6 + g;
+        h7 = h7 + h;
 
     }
 
+    // TODO: result = join_be(h0 .. h7)
 
 
     [
