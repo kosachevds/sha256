@@ -97,9 +97,8 @@ fn overflowing_sum(items: &[u32]) -> u32 {
 }
 
 fn extend_words(words: &mut [u32; CHUNK_WORDS_COUNT]) -> Vec<u32> {
-    let mut result: Vec<u32> = Vec::new();
-    result.reserve(64);
-    result.extend_from_slice(words);
+    let mut result = words.to_vec();
+    result.resize(64, 0u32);
     for i in CHUNK_WORDS_COUNT..64 {
         let w1 = result[i - 15];
         let s0 = w1.rotate_right(7) ^ w1.rotate_right(18) ^ (w1 >> 3);
