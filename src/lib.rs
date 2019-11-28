@@ -30,6 +30,7 @@ fn calculate(input: &[u8]) -> Vec<u8> {
     let input = preprocess(input);
     let chunk_size = 512 / 8;
     let chunk_begin = 0;
+    // TODO: remade with chunks();
     while chunk_begin < input.len() {
         let chunk = &input[chunk_begin..(chunk_begin + chunk_size)];
         let mut words = chunk_to_be_words(chunk);
@@ -55,21 +56,21 @@ fn calculate(input: &[u8]) -> Vec<u8> {
             h = g;
             g = f;
             f = e;
-            e = d + temp1;
+            e = d.overflowing_add(temp1).0;
             d = c;
             c = b;
             b = a;
-            a = temp1 + temp2;
+            a = temp1.overflowing_add(temp2).0;
         }
 
-        h0 = h0 + a;
-        h1 = h1 + b;
-        h2 = h2 + c;
-        h3 = h3 + d;
-        h4 = h4 + e;
-        h5 = h5 + f;
-        h6 = h6 + g;
-        h7 = h7 + h;
+        h0 = h0.overflowing_add(a).0;
+        h1 = h1.overflowing_add(b).0;
+        h2 = h2.overflowing_add(c).0;
+        h3 = h3.overflowing_add(d).0;
+        h4 = h4.overflowing_add(e).0;
+        h5 = h5.overflowing_add(f).0;
+        h6 = h6.overflowing_add(g).0;
+        h7 = h7.overflowing_add(h).0;
 
     }
 
