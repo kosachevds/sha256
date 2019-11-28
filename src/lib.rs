@@ -6,7 +6,7 @@ const RESULT_LENGTH: usize = 32;
 const CHUNK_BYTES_COUNT: usize = 512 / 8;
 const CHUNK_WORDS_COUNT: usize = 16;
 
-fn calculate(input: &[u8]) -> [u8; 32] {
+fn calculate(input: &[u8]) -> Vec<u8> {
     let mut h0: u32 = 0x6A09E667;
     let mut h1: u32 = 0xBB67AE85;
     let mut h2: u32 = 0x3C6EF372;
@@ -73,15 +73,18 @@ fn calculate(input: &[u8]) -> [u8; 32] {
 
     }
 
-    // TODO: result = join_be(h0 .. h7)
+    let mut result: Vec<u8> = Vec::new();
+    result.extend_from_slice(&h0.to_be_bytes());
+    result.extend_from_slice(&h1.to_be_bytes());
+    result.extend_from_slice(&h2.to_be_bytes());
+    result.extend_from_slice(&h3.to_be_bytes());
+    result.extend_from_slice(&h4.to_be_bytes());
+    result.extend_from_slice(&h5.to_be_bytes());
+    result.extend_from_slice(&h6.to_be_bytes());
+    result.extend_from_slice(&h7.to_be_bytes());
 
-
-    [
-        0xD7u8, 0xA8, 0xFB, 0xB3, 0x07, 0xD7, 0x80, 0x94, 
-        0x69, 0xCA, 0x9A, 0xBC, 0xB0, 0x08, 0x2E, 0x4F, 
-        0x8D, 0x56, 0x51, 0xE4, 0x6D, 0x3C, 0xDB, 0x76, 
-        0x2D, 0x02, 0xD0, 0xBF, 0x37, 0xC9, 0xE5, 0x92
-    ]
+    // TODO: try with [u8; 32] (via try_from)
+    result
 }
 
 fn extend_words(words: &mut [u32; CHUNK_WORDS_COUNT]) -> Vec<u32> {
