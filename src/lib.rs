@@ -96,7 +96,14 @@ fn extend_words(words: &mut [u32; CHUNK_WORDS_COUNT]) -> Vec<u32> {
         let s0 = w1.rotate_right(7) ^ w1.rotate_right(18) ^ (w1 >> 3);
         let w2 = result[i - 2];
         let s1 = w2.rotate_right(17) ^ w2.rotate_right(19) ^ (w2 >> 10);
-        result[i] = result[i - 16] + s0 + result[i - 7] + s1;
+
+        let mut sum = 0u32;
+        sum = sum.overflowing_add(result[i - 16]).0; 
+        sum = sum.overflowing_add(s0).0;
+        sum = sum.overflowing_add(result[i - 7]).0;
+        sum = sum.overflowing_add(s1).0;
+
+        result[i] = sum;
     }
     result
 }
