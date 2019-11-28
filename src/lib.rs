@@ -51,7 +51,7 @@ fn calculate(input: &[u8]) -> Vec<u8> {
             let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
             let maj = (a & b) ^ (a & c) ^ (b ^ c);
             let temp2 = s0 + maj;
-
+            
             h = g;
             g = f;
             f = e;
@@ -85,6 +85,14 @@ fn calculate(input: &[u8]) -> Vec<u8> {
 
     // TODO: try with [u8; 32] (via try_from)
     result
+}
+
+fn overflowing_sum(items: &[u32]) -> u32 {
+    let mut sum = 0u32;
+    for item in items {
+        sum = sum.overflowing_add(*item).0;
+    }
+    sum
 }
 
 fn extend_words(words: &mut [u32; CHUNK_WORDS_COUNT]) -> Vec<u32> {
