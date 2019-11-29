@@ -2,11 +2,11 @@ use std::u64;
 use std::u32;
 use std::convert::TryInto;
 
-const RESULT_LENGTH: usize = 32;
+pub const RESULT_LENGTH: usize = 32;
 const CHUNK_BYTES_COUNT: usize = 512 / 8;
 const CHUNK_WORDS_COUNT: usize = 16;
 
-fn calculate(input: &[u8]) -> Vec<u8> {
+pub fn calculate(input: &[u8]) -> Vec<u8> {
     let mut h0: u32 = 0x6A09E667;
     let mut h1: u32 = 0xBB67AE85;
     let mut h2: u32 = 0x3C6EF372;
@@ -28,11 +28,10 @@ fn calculate(input: &[u8]) -> Vec<u8> {
     ];
 
     let input = preprocess(input);
-    let chunk_size = 512 / 8;
     let chunk_begin = 0;
     // TODO: remade with chunks();
     while chunk_begin < input.len() {
-        let chunk = &input[chunk_begin..(chunk_begin + chunk_size)];
+        let chunk = &input[chunk_begin..(chunk_begin + CHUNK_BYTES_COUNT)];
         let mut words = chunk_to_be_words(chunk);
         let words = extend_words(&mut words);
 
