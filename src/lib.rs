@@ -45,7 +45,7 @@ pub fn calculate(input: &[u8]) -> Vec<u8> {
         let mut g = h6;
         let mut h = h7;
 
-        for i in 0..63 {
+        for i in 0..words.len() {
             let s1 = e.rotate_right(6) ^ e.rotate_right(11) ^ e.rotate_right(25);
             let ch = (e & f) ^ ((!e) & g);
             let temp1 = overflowing_sum(&[h, s1, ch, k[i], words[i]]);
