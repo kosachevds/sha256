@@ -50,7 +50,7 @@ pub fn calculate(input: &[u8]) -> Vec<u8> {
             let ch = (e & f) ^ ((!e) & g);
             let temp1 = overflowing_sum(&[h, s1, ch, k[i], words[i]]);
             let s0 = a.rotate_right(2) ^ a.rotate_right(13) ^ a.rotate_right(22);
-            let maj = (a & b) ^ (a & c) ^ (b ^ c);
+            let maj = (a & b) ^ (a & c) ^ (b & c);
             let (temp2, _) = s0.overflowing_add(maj);
 
             h = g;
